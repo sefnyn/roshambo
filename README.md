@@ -1,5 +1,10 @@
-# Roshambo
+# Roshambo : a tiny web app built using ReactJS
 
+## Requirements
+
+```
+NodeJS
+```
 
 ## Install
 
