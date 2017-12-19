@@ -8,7 +8,7 @@ $ npm install -g yarn babel
 $ yarn install
 ```
 
-##Launch development mode
+## Launch development mode
 
 ```
 $ yarn start
