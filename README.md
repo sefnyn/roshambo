@@ -1,15 +1,18 @@
-Roshambo
+# Roshambo
 
 
-Install
+## Install
 
+```
 $ npm install -g yarn babel
 $ yarn install
+```
 
+##Launch development mode
 
-Launch development mode
-
+```
 $ yarn start
+```
 
 
 Browse to http://localhost:3000
