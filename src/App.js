@@ -13,10 +13,11 @@ Our state is:
 - game started
 - game over
 - match over
-- score, e.g. [2, 3]
+- computer score
+- player score
 - current player
-- computer move
-- player move
+- computer's move
+- player's move
 - game winner (calculated)
 - match winner (calculated)
 
@@ -47,13 +48,19 @@ class Computer extends Component {
 }
 
 class Player extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: null,
+    };
+  }
   render() {
     return (
       <div className='player'>
-         <Col>Player's move</Col>
-         <Button bsSize='small'>Rock</Button>
-         <Button bsSize='small'>Paper</Button>
-         <Button bsSize='small'>Scissors</Button>
+         <Col>Player's move: {this.state.value}</Col>
+         <Button bsSize='small' onClick={() => this.setState({value: 'Rock'})} >Rock</Button>
+         <Button bsSize='small' onClick={() => this.setState({value: 'Paper'})} >Paper</Button>
+         <Button bsSize='small' onClick={() => this.setState({value: 'Scissors'})} >Scissors</Button>
       </div>
     );
   }
@@ -61,9 +68,11 @@ class Player extends Component {
 
 class Status extends Component {
   constructor(props) {
-    super(props);
+    super(props);  
     this.state = {
-      gameStarted: false
+      gameStarted: false,
+      gameOver: false,
+      matchOver: false
     };
     this.startGame = this.startGame.bind(this);
   }
@@ -98,16 +107,48 @@ class Footer extends Component {
   }
 }
 
-class App extends Component {
+class Game extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      moves: [null, null],
+    };
+  }
+
+  handleClick(i) {
+    const moves = this.state.moves.slice();
+    moves[i] = 'X';
+    this.setState({moves: moves});
+    console.log('Array of moves' + this.state.moves[0] + this.state.moves[1]);
+  }
+
+  renderPlayer(i) {
+    return (
+      <Player
+        value={this.state.moves[i]}
+        onClick={() => this.handleClick(i)}
+      />
+    );
+  }
+
   render() {
+    const status = 'Next player: You';
     return (
       <Grid className='grid'>
         <Header />
         <Computer />
-        <Player />
-        <Status />
+        <Player>{this.renderPlayer(0)}</Player>
+        <Status>{status}</Status>
         <Footer />
       </Grid>
+    );
+  }
+}
+
+class App extends Component {
+  render() {
+    return (
+      <Game />
     );
   }
 }
