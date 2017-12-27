@@ -37,9 +37,8 @@ class Header extends Component {
 class Computer extends Component {
   render() {
     return (
-      <div className='computer'>
-         <Col>Computer:</Col>
-         <Button bsSize='small' disabled>?</Button>
+      <div>
+         <Button bsSize='small' disabled>{this.props.value}</Button>
       </div>
     );
   }
@@ -75,11 +74,11 @@ function Status(props) {
   console.log('Score ' + props.score);
   return (
     <div className='status'>
-      <Col className='bestof'>Best of 5 match</Col>
-      <Col>Computer: {props.score[0]}</Col>
-      <Col>Player: {props.score[1]}</Col>
+      <Col>Computer: {props.score[1]}</Col>
+      <Col>Player: {props.score[0]}</Col>
       <Col>Draw: {props.score[2]}</Col>
-      <Col>Next move: {props.nextMove}</Col>
+      <Col>  </Col>
+      <Col className='result'>{props.status}</Col>
     </div>
   );
 }
@@ -88,7 +87,7 @@ class Footer extends Component {
   render() {
     return (
       <div>
-        <Col className='footer'>Powered by React</Col>
+        <Col className='footer'>Written by N Syrotiuk. Powered by React</Col>
         <Image className='App-logo' alt='logo' src={logo}/>
       </div>
     );
@@ -99,9 +98,10 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      board: [null, null],
+      board: [null, '?'],
       score: [0, 0, 0],
-      computerIsNext: false
+      computerIsNext: false,
+      result: null
     };
   }
 
@@ -117,9 +117,12 @@ class Game extends Component {
 
   renderComputer() {
     return (
-      <Computer 
-        value={this.state.board[1]}
-      />
+      <div className='computer'>
+        <Col>Computer: {this.state.board[1]}</Col>
+        <Computer
+          value={this.state.board[1]}
+        />
+      </div>
     );
   }
 
@@ -135,7 +138,16 @@ class Game extends Component {
   }
 
   render() {
-    const nextMove = (this.state.computerIsNext ? 'Computer' : 'Player');
+    const score = this.state.score;
+    generateMove(this.state.board);
+    const result = calculateWinner(this.state);
+    let status;
+    if (result) {
+      status = result;
+    } else {
+      status = 'Next move: ' + (this.state.computerIsNext ? 'Computer' : 'Player');
+    }
+
     return (
       <Grid className='grid'>
         <Header />
@@ -145,7 +157,7 @@ class Game extends Component {
         <div>
           {this.renderPlayerPanel()}
         </div>
-        <Status score={this.state.score} nextMove={nextMove}/>
+        <Status score={score} status={status}/>
         <Footer />
       </Grid>
     );
@@ -157,6 +169,42 @@ class App extends Component {
     return (
       <Game />
     );
+  }
+}
+
+function calculateWinner(state) {
+  const playerMove = state.board[0];
+  const computerMove = state.board[1];
+  if ((playerMove == null) && (computerMove === '?')) {
+    return null;
+  } else {
+    if (playerMove === computerMove) {
+      state.score[2]++;
+      return 'Draw';
+    } else {
+      if (((playerMove === 'Rock') && (computerMove === 'Scissors')) ||
+          ((playerMove === 'Paper') && (computerMove === 'Rock')) ||
+          ((playerMove === 'Scissors') && (computerMove === 'Paper'))) {
+        state.score[0]++;
+        return 'Player wins';
+      } else {
+        state.score[1]++;
+        return 'Computer wins';
+      }
+    }
+  }
+}
+
+function generateMove(board) {
+
+  const objects = ['Rock', 'Paper', 'Scissors'];
+  if (board[0] == null) {
+    return null;
+  } else {
+    /* generate random move */
+    var random = Math.floor(Math.random() * 3);
+    board[1] = objects[random];
+    return board;
   }
 }
 
