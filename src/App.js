@@ -7,17 +7,15 @@
 - player move
 - game winner
 - match winner
-- [rock, paper, scissors]
+- moves/objects = [rock, paper, scissors]
 
 Our state is:
 - game started
 - game over
 - match over
-- computer score
-- player score
+- score [player, computer]
 - current player
-- computer's move
-- player's move
+- board [playerMove, computerMove]
 - game winner (calculated)
 - match winner (calculated)
 
@@ -40,60 +38,50 @@ class Computer extends Component {
   render() {
     return (
       <div className='computer'>
-         <Col>Computer's move</Col>
-         <Button bsSize='small'>?</Button>
+         <Col>Computer:</Col>
+         <Button bsSize='small' disabled>?</Button>
       </div>
     );
   }
 }
-
-class Player extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: null,
-    };
-  }
+/*
+class PlayerPanel extends Component {
   render() {
     return (
       <div className='player'>
-         <Col>Player's move: {this.state.value}</Col>
-         <Button bsSize='small' onClick={() => this.setState({value: 'Rock'})} >Rock</Button>
-         <Button bsSize='small' onClick={() => this.setState({value: 'Paper'})} >Paper</Button>
-         <Button bsSize='small' onClick={() => this.setState({value: 'Scissors'})} >Scissors</Button>
+        <Col>Player: {this.props.value}</Col>
+        <Player value={'Rock'} />
+        <Player value={'Paper'} />
+        <Player value={'Scissors'} />
+      </div>
+    );
+  }
+}
+*/
+
+class Player extends Component {
+  render() {
+    return (
+      <div>
+        <Button className='player-button' bsSize='small' onClick={() => this.props.onClick()}>
+          {this.props.value}
+        </Button>
       </div>
     );
   }
 }
 
-class Status extends Component {
-  constructor(props) {
-    super(props);  
-    this.state = {
-      gameStarted: false,
-      gameOver: false,
-      matchOver: false
-    };
-    this.startGame = this.startGame.bind(this);
-  }
-
-  startGame() {
-    console.log('start button clicked');
-    this.setState(prevState => ({
-      gameStarted: !prevState.gameStarted
-    }));
-  }
-
-  render() {
-    return (
-      <div className='status'>
-        <Col className='bestof'>Best of 5 match</Col>
-        <Col>Computer: 0</Col>
-        <Col>Player: 0</Col>
-        <Button className='startbutton' bsSize='small' onClick={this.startGame}>{this.state.gameStarted ? 'Quit' : 'Start game'}</Button>
-      </div>
-    );
-  }
+function Status(props) {
+  console.log('Score ' + props.score);
+  return (
+    <div className='status'>
+      <Col className='bestof'>Best of 5 match</Col>
+      <Col>Computer: {props.score[0]}</Col>
+      <Col>Player: {props.score[1]}</Col>
+      <Col>Draw: {props.score[2]}</Col>
+      <Col>Next move: {props.nextMove}</Col>
+    </div>
+  );
 }
 
 class Footer extends Component {
@@ -111,34 +99,53 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      moves: [null, null],
+      board: [null, null],
+      score: [0, 0, 0],
+      computerIsNext: false
     };
   }
 
-  handleClick(i) {
-    const moves = this.state.moves.slice();
-    moves[i] = 'X';
-    this.setState({moves: moves});
-    console.log('Array of moves' + this.state.moves[0] + this.state.moves[1]);
+  handleClick(move) {
+    const board = this.state.board.slice();
+    board[0] = move;
+    this.setState({
+      board: board,
+      computerIsNext: !this.state.computerIsNext,
+    });
+    console.log('Board array: ' + this.state.board);
   }
 
-  renderPlayer(i) {
+  renderComputer() {
     return (
-      <Player
-        value={this.state.moves[i]}
-        onClick={() => this.handleClick(i)}
+      <Computer 
+        value={this.state.board[1]}
       />
     );
   }
 
+  renderPlayerPanel(move) {
+    return (
+      <div className='player'>
+        <Col>Player: {this.state.board[0]}</Col>
+        <Player value={'Rock'}     onClick={() => this.handleClick('Rock')}/>
+        <Player value={'Paper'}    onClick={() => this.handleClick('Paper')}/>
+        <Player value={'Scissors'} onClick={() => this.handleClick('Scissors')}/>
+      </div>
+    );
+  }
+
   render() {
-    const status = 'Next player: You';
+    const nextMove = (this.state.computerIsNext ? 'Computer' : 'Player');
     return (
       <Grid className='grid'>
         <Header />
-        <Computer />
-        <Player>{this.renderPlayer(0)}</Player>
-        <Status>{status}</Status>
+        <div>
+          {this.renderComputer()}
+        </div>
+        <div>
+          {this.renderPlayerPanel()}
+        </div>
+        <Status score={this.state.score} nextMove={nextMove}/>
         <Footer />
       </Grid>
     );
