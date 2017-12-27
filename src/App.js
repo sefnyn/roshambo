@@ -13,7 +13,7 @@ Our state is:
 - game started
 - game over
 - match over
-- score [player, computer]
+- score [player, computer, draw]
 - current player
 - board [playerMove, computerMove]
 - game winner (calculated)
@@ -43,20 +43,6 @@ class Computer extends Component {
     );
   }
 }
-/*
-class PlayerPanel extends Component {
-  render() {
-    return (
-      <div className='player'>
-        <Col>Player: {this.props.value}</Col>
-        <Player value={'Rock'} />
-        <Player value={'Paper'} />
-        <Player value={'Scissors'} />
-      </div>
-    );
-  }
-}
-*/
 
 class Player extends Component {
   render() {
@@ -77,7 +63,6 @@ function Status(props) {
       <Col>Computer: {props.score[1]}</Col>
       <Col>Player: {props.score[0]}</Col>
       <Col>Draw: {props.score[2]}</Col>
-      <Col>  </Col>
       <Col className='result'>{props.status}</Col>
     </div>
   );
