@@ -115,28 +115,6 @@ class Game extends Component {
     console.log('Board array: ' + this.state.board);
   }
 
-  renderComputer() {
-    return (
-      <div className='computer'>
-        <Col>Computer: {this.state.board[1]}</Col>
-        <Computer
-          value={this.state.board[1]}
-        />
-      </div>
-    );
-  }
-
-  renderPlayerPanel(move) {
-    return (
-      <div className='player'>
-        <Col>Player: {this.state.board[0]}</Col>
-        <Player value={'Rock'}     onClick={() => this.handleClick('Rock')}/>
-        <Player value={'Paper'}    onClick={() => this.handleClick('Paper')}/>
-        <Player value={'Scissors'} onClick={() => this.handleClick('Scissors')}/>
-      </div>
-    );
-  }
-
   render() {
     const score = this.state.score;
     generateMove(this.state.board);
@@ -151,11 +129,15 @@ class Game extends Component {
     return (
       <Grid className='grid'>
         <Header />
-        <div>
-          {this.renderComputer()}
+        <div className='computer'>
+          <Col>Computer: {this.state.board[1]}</Col>
+          <Computer value={this.state.board[1]} />
         </div>
-        <div>
-          {this.renderPlayerPanel()}
+        <div className='player'>
+          <Col>Player: {this.state.board[0]}</Col>
+          <Player value={'Rock'}     onClick={() => this.handleClick('Rock')}/>
+          <Player value={'Paper'}    onClick={() => this.handleClick('Paper')}/>
+          <Player value={'Scissors'} onClick={() => this.handleClick('Scissors')}/>
         </div>
         <Status score={score} status={status}/>
         <Footer />
